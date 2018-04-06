@@ -10,34 +10,25 @@ def insert_table(host, user, password, db, dicionario):
     Session.configure(bind=engine)
     session = Session()
     for time, email, subject in zip(dicionario['Time'],dicionario['Email'],dicionario['Subject']):
-        print "laco"
+        print time, email, subject
         stmt = "SELECT email from usuarios where time="+"'"+time+"'"
         result_proxy = session.execute(stmt)
         result = result_proxy.fetchall()
+        print result
         if result:
-            print result
             validate = True
         else:
+            print "nao valido"
             validate = False
-        if not validate:
+        if validate == False:
             print "entrei"
-            stmt = 'INSERT INTO usuarios(email, subject, time) VALUES(+'+'"'+email+'","'+subject+'","'+time+'")'
+            insert = 'INSERT INTO usuarios(email, subject, time) VALUES('+'"'+email+'","'+subject+'","'+time+'")'
+            print insert
             try:
-                result_proxy = session.execute(stmt)
-                if 'INSERT' in stmt or 'UPDATE' in stmt or 'DELETE' in stmt:
-                    session.commit()
-                    return True
-
-                if 'SELECT' in stmt:
-                    result = result_proxy.fetchall()
-                    return result
-
+                result_proxy = session.execute(insert)
+                session.commit()
             except Exception as e:
-                print  e
-                if '_mysql_exceptions.IntegrityError' in str(e):
-                    return "Already here"
+                print e
 
-                else:
-                    return False
         else:
             print "This email sent by "+ str(result[0]) + " is already in database"

@@ -7,7 +7,10 @@ from datetime import datetime
 def read_emails(mail):
     dicionario = {"Email":[],"Subject":[],"Time":[]}
     mail.select('inbox')
-    type, data = mail.search(None, 'ALL')
+    # type, data = mail.search(None, 'ALL')
+    #change to ALL to search inside all of your email Box, or Specify a Date
+    type, data = mail.search(None, '(SINCE "01-Apr-2018")')
+
     ids = data[0]
     id_list = ids.split(" ")
 
@@ -32,13 +35,16 @@ def read_emails(mail):
                                 list_string.pop(len(list_string)-1)
                                 list_string.pop(0)
                                 list_string = str('-'.join(list_string)).replace(",","")
-                                data = datetime.strptime(list_string, "%d-%b-%Y-%H:%M:%S")
+                                try:
+                                    data = datetime.strptime(list_string, "%d-%b-%Y-%H:%M:%S")
+                                except:
+                                    data = list_string
                                 dicionario['Time'].append(str(data))
 
 
                 else:
                     body = b.get_payload(decode=True)
-    return dicionario                        
+    return dicionario
                     # print body
                     # if "DevOps" in msg:
                     #
