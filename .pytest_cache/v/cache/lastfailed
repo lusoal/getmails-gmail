@@ -1,0 +1,4 @@
+{
+  "pytest.py": true, 
+  "test.py::test_mysql_connection": true
+}
