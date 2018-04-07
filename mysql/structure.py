@@ -11,7 +11,7 @@ def create_structure(user,password,host):
         Session = sessionmaker()
         Session.configure(bind=engine)
         session = Session()
-        sql = "CREATE TABLE usuarios(id int not null primary key auto_increment, email varchar(100) not null, subject varchar(30) not null, time varchar(30) not null)"
+        sql = "CREATE TABLE usuarios(id int not null primary key auto_increment, email varchar(200) not null, subject varchar(200) not null, time varchar(30) not null)"
         result_proxy = session.execute(sql)
         session.commit()
         print "Structure Created"

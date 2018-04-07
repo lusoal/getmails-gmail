@@ -1,34 +1,40 @@
 from sqlalchemy import *
 from sqlalchemy.orm import *
 
-def insert_table(host, user, password, db, dicionario):
-    validate = ""
+def connect_to_db(host, user, password, db):
     #connection db
-    engine = create_engine("mysql://"+user+":"+password+"@"+host+"/"+db)
-    #creating session
-    Session = sessionmaker()
-    Session.configure(bind=engine)
-    session = Session()
-    for time, email, subject in zip(dicionario['Time'],dicionario['Email'],dicionario['Subject']):
-        print time, email, subject
-        stmt = "SELECT email from usuarios where time="+"'"+time+"'"
-        result_proxy = session.execute(stmt)
-        result = result_proxy.fetchall()
-        print result
-        if result:
-            validate = True
-        else:
-            print "nao valido"
-            validate = False
-        if validate == False:
-            print "entrei"
-            insert = 'INSERT INTO usuarios(email, subject, time) VALUES('+'"'+email+'","'+subject+'","'+time+'")'
-            print insert
+    try:
+        engine = create_engine("mysql://"+user+":"+password+"@"+host+"/"+db)
+        #creating session
+        Session = sessionmaker()
+        Session.configure(bind=engine)
+        session = Session()
+        return session
+    except:
+        return False
+
+def insert_emails(session, time, email, subject):
+    validate = validate_email(session, time)
+    if session:
+        if validate:
+            insert = 'INSERT INTO usuarios(email, subject, time) VALUES('+'"'+email+'","'+subject+'","'+str(time)+'")'
             try:
                 result_proxy = session.execute(insert)
                 session.commit()
+                print "New email added "+email
             except Exception as e:
                 print e
 
+
+def validate_email(session, time):
+    if session:
+        select = "SELECT email from usuarios where time="+"'"+str(time)+"'"
+        result_proxy = session.execute(select)
+        result = result_proxy.fetchall()
+        if result:
+            print "This mail "+str(result)+ " is already on database"
+            return False
         else:
-            print "This email sent by "+ str(result[0]) + " is already in database"
+            return True
+    else:
+        return False

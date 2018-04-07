@@ -27,9 +27,10 @@ password = raw_input("Type your Email Password: ")
 
 def save_emails():
     login = gmail_login(email,password)
-    dicionario = read_emails(login)
-    print dicionario
-    insert_table(db_host, db_user, db_pass, "gmailusers", dicionario)
+    session = connect_to_db(db_host, db_user, db_pass, "gmailusers")
+    print "Working ...."
+    read_emails(login, session)
+    print "Done"
 
 def main():
     save_emails()
